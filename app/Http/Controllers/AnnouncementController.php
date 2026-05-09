@@ -16,13 +16,13 @@ class AnnouncementController extends Controller
             ->withQueryString();
 
         
-$categories = Announcement::published()
-    ->select('category')
-    ->distinct()
-    ->orderBy('category')
-    ->pluck('category');
+        $categories = Announcement::where('is_published', true)
+        ->select('category')
+        ->distinct()
+        ->orderBy('category')
+        ->pluck('category');
 
-        return view('announcements.index', compact('announcements', 'categories'));
+    return view('announcements.index', compact('announcements', 'categories'));
     }
 
     /** Single announcement */
