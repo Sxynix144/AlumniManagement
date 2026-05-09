@@ -15,7 +15,12 @@ class AnnouncementController extends Controller
             ->paginate(9)
             ->withQueryString();
 
-        $categories = Announcement::published()->distinct()->pluck('category');
+        
+$categories = Announcement::published()
+    ->select('category')
+    ->distinct()
+    ->orderBy('category')
+    ->pluck('category');
 
         return view('announcements.index', compact('announcements', 'categories'));
     }
