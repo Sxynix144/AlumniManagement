@@ -36,13 +36,34 @@
 <div class="two-col" style="align-items:start">
 
     {{-- Pending Approvals --}}
-    <div class="card">
-        <div class="flex justify-between items-center mb-2">
-            <h2 class="section-title" style="margin-bottom:0;border:none">⏳ Pending Approvals</h2>
-            @if($stats['pending'] > 0)
-                <a href="{{ route('admin.pending') }}" class="btn btn-sm btn-outline">View All</a>
+   {{-- Pending Approvals --}}
+@foreach($pendingAlumni as $alumni)
+    <div class="flex justify-between items-center" style="padding:.75rem 0;border-bottom:1px solid var(--light)">
+        <div>
+            <strong>{{ $alumni->full_name }}</strong>
+            <div class="text-sm text-muted">Batch {{ $alumni->graduation_year }} · {{ $alumni->email }}</div>
+        </div>
+        <div class="flex gap-1 items-center">
+            @if(auth()->user()->isAdmin())
+                {{-- Only admin sees these buttons --}}
+                <form method="POST" action="{{ route('admin.approve', $alumni) }}">
+                    @csrf
+                    <button class="btn btn-sm btn-success">✓ Approve</button>
+                </form>
+                <form method="POST" action="{{ route('admin.reject', $alumni) }}">
+                    @csrf @method('DELETE')
+                    <button class="btn btn-sm btn-danger"
+                        onclick="return confirm('Reject this registration?')">✗</button>
+                </form>
+            @else
+                {{-- Coordinator sees a notice instead --}}
+                <span style="font-size:.75rem;color:var(--slate);background:var(--light);padding:.3rem .7rem;border-radius:99px;font-weight:600">
+                    🔒 Admin Only
+                </span>
             @endif
         </div>
+    </div>
+@endforeach
 
         @forelse($pendingAlumni as $alumni)
             <div class="flex justify-between items-center" style="padding:.75rem 0;border-bottom:1px solid var(--light)">
