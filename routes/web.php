@@ -114,6 +114,17 @@ Route::middleware(['auth', 'staff'])->prefix('events')->name('events.')->group(f
     Route::get('/{event}/export-attendees',  [EventController::class, 'exportAttendees'])->name('exportAttendees');
 });
 
+
+Route::get('/test-mail', function () {
+    try {
+        \Illuminate\Support\Facades\Mail::raw('Test email from AlumniConnect', function ($msg) {
+            $msg->to('your-personal@gmail.com')->subject('Test');
+        });
+        return 'Mail sent successfully!';
+    } catch (\Exception $e) {
+        return 'MAIL ERROR: ' . $e->getMessage();
+    }
+});
 // ── Auth Routes (Breeze) ──────────────────────────────────────────────────────
 
 require __DIR__ . '/auth.php';
