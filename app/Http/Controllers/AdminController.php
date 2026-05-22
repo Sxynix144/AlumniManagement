@@ -56,18 +56,19 @@ class AdminController extends Controller
     /**
      * Approve a pending alumni profile.
      */
-    public function approve(Alumni $alumni)
-    {
-        abort_if($alumni->status !== 'pending', 400, 'This record is not in a pending state.');
+ public function approve(Alumni $alumni)
+{
+    abort_if($alumni->status !== 'pending', 400, 'This record is not in a pending state.');
 
-        $alumni->update(['status' => 'active']);
+    $alumni->update(['status' => 'active']);
 
-        return back()->with('success', "{$alumni->full_name} has been approved.");
+    // ✅ Also mark email as verified so they can access their profile
+    if ($alumni->user && ! $alumni->user->hasVerifiedEmail()) {
+        $alumni->user->markEmailAsVerified();
     }
 
-    /**
-     * Reject / delete a pending registration.
-     */
+    return back()->with('success', "{$alumni->full_name} has been approved.");
+}
     public function reject(Alumni $alumni)
     {
         abort_if($alumni->status !== 'pending', 400);
