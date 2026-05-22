@@ -32,7 +32,7 @@ Route::get('/faqs',                         [FaqController::class,          'ind
 
 // ── Authenticated + Verified Alumni Routes ────────────────────────────────────
 
-Route::middleware(['auth', 'verified'])->group(function () {
+Route::middleware(['auth'])->group(function () {
     Route::get('/my-profile',           [AlumniController::class,        'profile'])->name('alumni.profile');
     Route::patch('/my-profile',         [AlumniController::class,        'update'])->name('alumni.update');
     Route::post('/events/{event}/rsvp', [AlumniController::class,        'rsvp'])->name('alumni.rsvp');

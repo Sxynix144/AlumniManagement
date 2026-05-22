@@ -28,25 +28,25 @@ class RegisteredUserController extends Controller
      *
      * @throws ValidationException
      */
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
+   public function store(Request $request): RedirectResponse
+{
+    $request->validate([
+        'name'     => ['required', 'string', 'max:255'],
+        'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+        'password' => ['required', 'confirmed', Rules\Password::defaults()],
+    ]);
 
-       $user = User::create([
-    'name'     => $request->name,
-    'email'    => $request->email,
-    'password' => Hash::make($request->password),
-    'role'     => 'alumni', // ← add this
-]);
+    $user = User::create([
+        'name'     => $request->name,
+        'email'    => $request->email,
+        'password' => Hash::make($request->password),
+        'role'     => 'alumni',
+    ]);
 
-        event(new Registered($user));
+    // ✅ No email verification — go straight to profile
+    Auth::login($user);
 
-        Auth::login($user);
-        $user->sendEmailVerificationNotification();
-        return redirect()->route('verification.notice');
-    }
+    return redirect()->route('alumni.profile')
+           ->with('success', 'Welcome to AlumniConnect! Your account is now active.');
+}
 }
