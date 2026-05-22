@@ -15,17 +15,17 @@ class AppServiceProvider extends ServiceProvider
         //
     }
 
-    public function boot(): void
-    {
-        // Force HTTPS on production
-        if (app()->environment('production')) {
-            URL::forceScheme('https');
-        }
-
-        // ✅ Register verification email listener
-        Event::listen(
-            Registered::class,
-            SendEmailVerificationNotification::class,
-        );
+   public function boot(): void
+{
+    // Force HTTPS on production — fixes 419 on Render
+    if (app()->environment('production')) {
+        \Illuminate\Support\Facades\URL::forceScheme('https');
+        \Illuminate\Support\Facades\URL::forceRootUrl(config('app.url'));
     }
+
+    Event::listen(
+        Registered::class,
+        SendEmailVerificationNotification::class,
+    );
+}
 }
